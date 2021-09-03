@@ -87,3 +87,9 @@ staticfiles/
 
 
 kjhweb.pem
+
+key.py
+save_token.py
+get_token.py
+kakao_token.json
+
