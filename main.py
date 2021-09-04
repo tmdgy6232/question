@@ -1,7 +1,7 @@
 import cv2
 import tensorflow.keras
 import numpy as np
-from kakao import beepsound, send_music_link
+from kakao import beepsound, send_music_link, send_question_text
 
 
 ## 이미지 전처리
@@ -32,6 +32,7 @@ capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 
 sleep_cnt = 1  # 30초간 "졸림" 상태를 확인하기 위한 변수
+
 while True:
     ret, frame = capture.read()
     if ret == True:
@@ -52,9 +53,9 @@ while True:
 
     # 예측
     prediction = model.predict(preprocessed)
-    # print(prediction) # [[0.00533728 0.99466264]]
+    print(np.round(prediction, 3))
 
-    if prediction[0, 0] < prediction[0, 1]:
+    if prediction[0, 1] >= np.mean(prediction[0]):
         print('졸림 상태')
         sleep_cnt += 1
 
@@ -64,10 +65,17 @@ while True:
             print('30초간 졸고 있네요!!!')
             beepsound()
             send_music_link()
-            break  ## 1번만 알람이 오면 프로그램을 정지 시킴 (반복을 원한다면, 주석으로 막기!)
-    else:
+            break
+
+    elif prediction[0, 0] >= np.mean(prediction[0]):
         print('깨어있는 상태')
         sleep_cnt = 1
+
+    elif prediction[0, 2] >= np.mean(prediction[0]):
+        print('질문이 있어요!')
+        beepsound()
+        send_question_text()
+        break
 
 # 카메라 객체 반환
 capture.release()
