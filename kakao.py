@@ -32,3 +32,26 @@ def send_music_link():
         print('텍스트 메시지를 성공적으로 보냈습니다.')
     else:
         print('텍스트 메시지를 보내지 못했습니다. 오류메시지 : ', res.json())
+
+def send_question_text():
+    KAKAO_TOKEN_FILENAME = "kakao_token.json"  # "<kakao_token.json 파일이 있는 경로를 입력하세요.>"
+    KAKAO_APP_KEY = key.REST_API_KEY
+    tokens = kakao_utils.update_tokens(KAKAO_APP_KEY, KAKAO_TOKEN_FILENAME)
+
+    # 텍스트 메시지 보내기
+    template = {
+        "object_type": "text",
+        "text": "선생님 질문이 있어요!",
+        "link": {
+            "web_url": "https://www.naver.com",
+            "mobile_web_url": "https://www.naver.com"
+        },
+        "button_title": "질문"
+    }
+
+    # 카카오 메시지 전송
+    res = kakao_utils.send_message(KAKAO_TOKEN_FILENAME, template)
+    if res.json().get('result_code') == 0:
+        print('텍스트 메시지를 성공적으로 보냈습니다.')
+    else:
+        print('텍스트 메시지를 보내지 못했습니다. 오류메시지 : ', res.json())
